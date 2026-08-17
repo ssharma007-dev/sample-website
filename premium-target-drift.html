@@ -1,0 +1,749 @@
+<title>Premium Target Drift</title>
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  :root {
+    --bg: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #EBEFF6;
+    --border: #D8DFEA;
+    --text: #1A2233;
+    --text-muted: #5B6577;
+    --accent: #2C57B8;
+    --accent-strong: #1E3E8C;
+    --accent-soft: #E7EDFB;
+    --success: #1C8A57;
+    --success-soft: #E3F5EC;
+    --danger: #C43D34;
+    --danger-soft: #FBEAE7;
+    --warning: #A5710C;
+    --warning-soft: #FAF0DA;
+    --code-bg: #12182A;
+    --code-text: #DCE4F5;
+    --shadow: rgba(23, 35, 64, 0.10);
+
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E131C;
+      --surface: #161E2A;
+      --surface-2: #1C2534;
+      --border: #2B3548;
+      --text: #E7ECF5;
+      --text-muted: #96A3B8;
+      --accent: #7098F5;
+      --accent-strong: #9BB8FF;
+      --accent-soft: #1C2A46;
+      --success: #4ECB8D;
+      --success-soft: #123A2A;
+      --danger: #F0857D;
+      --danger-soft: #3C1E1C;
+      --warning: #E5B361;
+      --warning-soft: #3B2C13;
+      --code-bg: #0A0E18;
+      --code-text: #D6E0F5;
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E131C;
+    --surface: #161E2A;
+    --surface-2: #1C2534;
+    --border: #2B3548;
+    --text: #E7ECF5;
+    --text-muted: #96A3B8;
+    --accent: #7098F5;
+    --accent-strong: #9BB8FF;
+    --accent-soft: #1C2A46;
+    --success: #4ECB8D;
+    --success-soft: #123A2A;
+    --danger: #F0857D;
+    --danger-soft: #3C1E1C;
+    --warning: #E5B361;
+    --warning-soft: #3B2C13;
+    --code-bg: #0A0E18;
+    --code-text: #D6E0F5;
+    --shadow: rgba(0, 0, 0, 0.45);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.75rem 1.5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    margin: 0 0 0.6rem;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 2.1rem;
+    margin: 0 0 0.6rem;
+    text-wrap: balance;
+    color: var(--text);
+  }
+  .lede {
+    color: var(--text-muted);
+    max-width: 62ch;
+    margin: 0;
+    font-size: 0.98rem;
+  }
+  .lede strong { color: var(--text); font-weight: 600; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px var(--shadow);
+    padding: 1.5rem 1.6rem;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.3rem;
+    margin: 0 0 0.4rem;
+    color: var(--text);
+  }
+  .card > p.hint {
+    margin: 0 0 1.1rem;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    max-width: 58ch;
+  }
+
+  /* Quote card */
+  .quote-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.9rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .insurer {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+  .quote-badge {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--success-soft);
+    color: var(--success);
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .quote-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.9rem 1.2rem;
+    margin: 0 0 1.2rem;
+  }
+  .quote-fields div { display: flex; flex-direction: column; gap: 0.2rem; }
+  .quote-fields dt {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .quote-fields dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.92rem;
+  }
+
+  .quote-total {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 1.1rem 1.3rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .quote-total-label {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+  .quote-total-value {
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-strong);
+  }
+  .quote-sub {
+    margin: 0.7rem 0 1.2rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .quote-sub span { font-variant-numeric: tabular-nums; color: var(--text); }
+
+  button {
+    font-family: var(--font-body);
+    cursor: pointer;
+  }
+  button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--accent-strong); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent-strong); }
+
+  /* Lab */
+  .lab-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.1rem;
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid transparent;
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .chip-bad { background: var(--danger-soft); color: var(--danger); }
+  .chip-good { background: var(--success-soft); color: var(--success); }
+  .chip:hover { border-color: currentColor; }
+
+  .lab-input-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  #selType {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 0 0.6rem;
+    font-size: 0.85rem;
+  }
+  #selInput {
+    flex: 1;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 0.55rem 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .lab-result {
+    min-height: 1.4rem;
+    font-size: 0.88rem;
+    margin-bottom: 1.1rem;
+  }
+  .result-line { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .status-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+  .status-found { background: var(--success-soft); color: var(--success); }
+  .status-missing { background: var(--danger-soft); color: var(--danger); }
+  .status-multi { background: var(--warning-soft); color: var(--warning); }
+  .captured {
+    font-family: var(--font-mono);
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 0.1rem 0.45rem;
+    border-radius: 5px;
+    font-size: 0.82rem;
+  }
+
+  .watch-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 0.6rem;
+  }
+  .watch-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.3rem; }
+  .watch-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+  }
+  .watch-row code {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    color: var(--text);
+  }
+  .watch-unpin {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 0 0.2rem;
+  }
+  .watch-unpin:hover { color: var(--danger); }
+  .watch-empty { color: var(--text-muted); font-size: 0.85rem; font-style: italic; }
+
+  .lab-log {
+    border-top: 1px solid var(--border);
+    padding-top: 0.9rem;
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.35rem;
+  }
+  .log-entry {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 0.5rem;
+  }
+  .log-entry time { flex-shrink: 0; color: var(--text-muted); opacity: 0.7; }
+  .log-entry.log-event { color: var(--text); }
+
+  .hit-highlight {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+    transition: outline-color 1.4s ease;
+  }
+
+  .notes ul {
+    margin: 0;
+    padding-left: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .notes li { font-size: 0.92rem; }
+  .notes strong { color: var(--text); }
+  .notes code {
+    font-family: var(--font-mono);
+    background: var(--surface-2);
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+</style>
+
+<main>
+  <header>
+    <p class="eyebrow">Reproduction rig · Dynamic element targeting</p>
+    <h1>Premium Target Drift</h1>
+    <p class="lede">
+      A quote page where <strong>Total Premium</strong> is never the same value twice.
+      Use it to check whether a selector, once captured, survives the next render —
+      or whether it quietly locked onto the value that happened to be on screen.
+    </p>
+  </header>
+
+  <section class="card quote" aria-label="Auto insurance quote — reproduction target">
+    <div class="quote-head">
+      <span class="insurer">Meridian Auto Insurance</span>
+      <span class="quote-badge" data-testid="quote-status">Quote Ready</span>
+    </div>
+    <dl class="quote-fields">
+      <div>
+        <dt>Quote ID</dt>
+        <dd data-testid="quote-id" id="quoteId">Q-88190</dd>
+      </div>
+      <div>
+        <dt>Policy Number</dt>
+        <dd data-testid="policy-number" id="policyNumber">POL-4471029</dd>
+      </div>
+      <div>
+        <dt>Coverage Period</dt>
+        <dd data-testid="coverage-period" id="coveragePeriod">6 months</dd>
+      </div>
+    </dl>
+    <div class="quote-total">
+      <span class="quote-total-label" data-testid="total-premium-label">Total Premium</span>
+      <span class="quote-total-value" data-testid="total-premium-value" id="premium-541">$541</span>
+    </div>
+    <p class="quote-sub">≈ <span data-testid="monthly-payment" id="monthlyPayment">$45</span>/mo for 12 months</p>
+    <button class="btn-primary" id="regenBtn">Generate new quote</button>
+  </section>
+
+  <section class="card lab">
+    <h2>Selector lab</h2>
+    <p class="hint">
+      Pin a selector, then generate a new quote a few times and watch the row below.
+      A selector that captured a literal value goes to <strong>not found</strong> the
+      moment that value changes; a selector anchored to a stable attribute keeps
+      finding the field and simply reports the new number.
+    </p>
+
+    <div class="lab-presets">
+      <button class="chip chip-bad" data-preset-type="css" data-preset-value="#premium-541">bad · CSS id</button>
+      <button class="chip chip-bad" data-preset-type="xpath" data-preset-value="//*[contains(text(),'$541')]">bad · XPath text()</button>
+      <button class="chip chip-good" data-preset-type="css" data-preset-value="[data-testid='total-premium-value']">good · data-testid</button>
+      <button class="chip chip-good" data-preset-type="xpath" data-preset-value="//*[@data-testid='total-premium-value']">good · XPath attribute</button>
+    </div>
+
+    <div class="lab-input-row">
+      <select id="selType" aria-label="Selector type">
+        <option value="css">CSS</option>
+        <option value="xpath">XPath</option>
+      </select>
+      <input id="selInput" type="text" placeholder="e.g. [data-testid='total-premium-value']" />
+      <button class="btn-secondary" id="runBtn">Run</button>
+      <button class="btn-secondary" id="pinBtn">Pin</button>
+    </div>
+
+    <div class="lab-result" id="labResult" aria-live="polite"></div>
+
+    <p class="watch-title">Pinned — re-checked on every regenerate</p>
+    <div class="watch-list" id="watchList">
+      <p class="watch-empty">Nothing pinned yet. Click a preset above, or run a selector and press Pin.</p>
+    </div>
+
+    <div class="lab-log" id="labLog" aria-live="polite"></div>
+  </section>
+
+  <section class="card notes">
+    <h2>Why it drifts, and what to anchor to instead</h2>
+    <ul>
+      <li>
+        <strong>DOM selectors:</strong> a selector built from the current render
+        (an id like <code>#premium-541</code>, or XPath <code>text()</code> matching
+        the literal string) is really a snapshot, not a target. Anchor to something
+        that doesn't change with the value — a <code>data-testid</code>, an
+        <code>aria-label</code>, or a fixed position relative to the static label
+        ("the sibling of the node whose text is <code>Total Premium</code>").
+      </li>
+      <li>
+        <strong>NLP / AI-based locators:</strong> the same failure shows up one level
+        up — if the tool resolves "the element that says Total Premium – $541"
+        by matching that exact phrase, re-anchor the instruction to the constant part
+        ("the value next to the Total Premium label") and let it read the number
+        rather than match it.
+      </li>
+      <li>
+        <strong>On-screen / coordinate targeting:</strong> a captured bounding box is
+        stable only as long as layout doesn't reflow around the new value's length.
+        Prefer targeting relative to the fixed label or container, not an absolute
+        region baked in at capture time.
+      </li>
+      <li>
+        <strong>Visual validation:</strong> for full-page or region checks, an exact
+        match level will flag every premium change as a diff. A regex-based content
+        check, an accessibility-region check, or a deliberately ignored/floating
+        region over just the value keeps the surrounding layout under strict
+        validation while treating the number itself as expected-to-change.
+      </li>
+    </ul>
+  </section>
+
+  <footer>Static reproduction surface — no data leaves this page.</footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var els = {
+    quoteId: document.getElementById("quoteId"),
+    policyNumber: document.getElementById("policyNumber"),
+    coveragePeriod: document.getElementById("coveragePeriod"),
+    premium: document.getElementById("premium-541"),
+    monthlyPayment: document.getElementById("monthlyPayment"),
+    regenBtn: document.getElementById("regenBtn"),
+    selType: document.getElementById("selType"),
+    selInput: document.getElementById("selInput"),
+    runBtn: document.getElementById("runBtn"),
+    pinBtn: document.getElementById("pinBtn"),
+    labResult: document.getElementById("labResult"),
+    watchList: document.getElementById("watchList"),
+    labLog: document.getElementById("labLog"),
+  };
+
+  var watches = []; // { id, type, value }
+  var watchSeq = 0;
+  var renderCount = 0;
+
+  function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function randomHash() {
+    return Math.random().toString(36).slice(2, 8);
+  }
+
+  function fmtCurrency(n) {
+    return "$" + n.toLocaleString("en-US");
+  }
+
+  function logLine(text, isEvent) {
+    var row = document.createElement("div");
+    row.className = "log-entry" + (isEvent ? " log-event" : "");
+    var time = document.createElement("time");
+    time.textContent = new Date().toLocaleTimeString([], { hour12: false });
+    var msg = document.createElement("span");
+    msg.textContent = text;
+    row.appendChild(time);
+    row.appendChild(msg);
+    els.labLog.appendChild(row);
+    els.labLog.scrollTop = els.labLog.scrollHeight;
+  }
+
+  function currentQuote() {
+    return {
+      quoteId: els.quoteId.textContent,
+      premium: parseInt(els.premium.textContent.replace(/[^0-9]/g, ""), 10),
+    };
+  }
+
+  function render(quote) {
+    els.quoteId.textContent = quote.quoteId;
+    els.policyNumber.textContent = quote.policyNumber;
+    els.coveragePeriod.textContent = quote.coveragePeriod;
+    els.premium.textContent = fmtCurrency(quote.premium);
+    els.premium.id = "premium-" + quote.premium;
+    els.premium.className = "quote-total-value render-" + quote.renderHash;
+    els.monthlyPayment.textContent = fmtCurrency(quote.monthly);
+  }
+
+  function regenerate(initial) {
+    renderCount += 1;
+    var premium = rand(300, 1400);
+    var quote = {
+      quoteId: "Q-" + rand(10000, 99999),
+      policyNumber: "POL-" + rand(1000000, 9999999),
+      coveragePeriod: [3, 6, 12][rand(0, 2)] + " months",
+      premium: premium,
+      monthly: Math.round(premium / 12),
+      renderHash: randomHash(),
+    };
+    render(quote);
+    logLine(
+      (initial ? "Page loaded → Total Premium " : "Quote regenerated → Total Premium ") +
+      fmtCurrency(premium) + " (render " + quote.renderHash + ", #" + renderCount + ")",
+      true
+    );
+    if (!initial) refreshWatches();
+  }
+
+  function evaluateSelector(type, value) {
+    var nodes = [];
+    if (type === "css") {
+      nodes = Array.prototype.slice.call(document.querySelectorAll(value));
+    } else {
+      var xres = document.evaluate(
+        value, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null
+      );
+      for (var i = 0; i < xres.snapshotLength; i++) {
+        nodes.push(xres.snapshotItem(i));
+      }
+    }
+    return nodes;
+  }
+
+  function clearHighlights() {
+    Array.prototype.forEach.call(
+      document.querySelectorAll(".hit-highlight"),
+      function (n) { n.classList.remove("hit-highlight"); }
+    );
+  }
+
+  function statusPill(count) {
+    var span = document.createElement("span");
+    span.className = "status-pill " + (
+      count === 0 ? "status-missing" : count === 1 ? "status-found" : "status-multi"
+    );
+    span.textContent = count === 0 ? "not found" : count === 1 ? "found" : count + " matches";
+    return span;
+  }
+
+  function runNow(type, value, opts) {
+    opts = opts || {};
+    els.labResult.innerHTML = "";
+    var line = document.createElement("div");
+    line.className = "result-line";
+
+    var nodes, error = null;
+    try {
+      nodes = evaluateSelector(type, value);
+    } catch (e) {
+      nodes = [];
+      error = e.message;
+    }
+
+    if (!opts.silent) clearHighlights();
+
+    if (error) {
+      line.appendChild(statusPill(0));
+      var errSpan = document.createElement("span");
+      errSpan.className = "captured";
+      errSpan.textContent = "invalid selector: " + error;
+      line.appendChild(errSpan);
+    } else {
+      line.appendChild(statusPill(nodes.length));
+      if (nodes.length) {
+        var captured = document.createElement("span");
+        captured.className = "captured";
+        captured.textContent = nodes.map(function (n) {
+          return n.textContent.trim();
+        }).join(" | ");
+        line.appendChild(captured);
+        if (!opts.silent) {
+          nodes.forEach(function (n) { n.classList.add("hit-highlight"); });
+          nodes[0].scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    }
+
+    if (!opts.silent) {
+      els.labResult.appendChild(line);
+      logLine("Ran " + type.toUpperCase() + " `" + value + "` → " +
+        (error ? "error" : nodes.length + " match(es)"));
+    }
+
+    return { count: error ? 0 : nodes.length, error: error };
+  }
+
+  function renderWatches() {
+    els.watchList.innerHTML = "";
+    if (!watches.length) {
+      var empty = document.createElement("p");
+      empty.className = "watch-empty";
+      empty.textContent = "Nothing pinned yet. Click a preset above, or run a selector and press Pin.";
+      els.watchList.appendChild(empty);
+      return;
+    }
+    watches.forEach(function (w) {
+      var row = document.createElement("div");
+      row.className = "watch-row";
+
+      var result = runNow(w.type, w.value, { silent: true });
+      row.appendChild(statusPill(result.count));
+
+      var code = document.createElement("code");
+      code.textContent = w.type.toUpperCase() + "  " + w.value;
+      row.appendChild(code);
+
+      var unpin = document.createElement("button");
+      unpin.className = "watch-unpin";
+      unpin.setAttribute("aria-label", "Unpin");
+      unpin.textContent = "✕";
+      unpin.addEventListener("click", function () {
+        watches = watches.filter(function (x) { return x.id !== w.id; });
+        renderWatches();
+      });
+      row.appendChild(unpin);
+
+      els.watchList.appendChild(row);
+    });
+  }
+
+  function refreshWatches() {
+    if (watches.length) renderWatches();
+  }
+
+  function pinSelector(type, value) {
+    var exists = watches.some(function (w) { return w.type === type && w.value === value; });
+    if (exists) return;
+    watchSeq += 1;
+    watches.push({ id: watchSeq, type: type, value: value });
+    renderWatches();
+    logLine("Pinned " + type.toUpperCase() + " `" + value + "`");
+  }
+
+  els.regenBtn.addEventListener("click", function () { regenerate(false); });
+
+  els.runBtn.addEventListener("click", function () {
+    var type = els.selType.value;
+    var value = els.selInput.value.trim();
+    if (!value) return;
+    runNow(type, value, {});
+  });
+
+  els.pinBtn.addEventListener("click", function () {
+    var type = els.selType.value;
+    var value = els.selInput.value.trim();
+    if (!value) return;
+    pinSelector(type, value);
+  });
+
+  els.selInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") els.runBtn.click();
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (chip) {
+    chip.addEventListener("click", function () {
+      var type = chip.getAttribute("data-preset-type");
+      var value = chip.getAttribute("data-preset-value");
+      els.selType.value = type;
+      els.selInput.value = value;
+      runNow(type, value, {});
+      pinSelector(type, value);
+    });
+  });
+
+  regenerate(true);
+})();
+</script>
