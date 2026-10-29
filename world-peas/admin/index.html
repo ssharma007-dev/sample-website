@@ -103,6 +103,7 @@
   try { selected = new Set((fromUrl ?? localStorage.getItem(KEY) ?? '').split(',').filter(Boolean)) } catch {}
   if (fromUrl === 'all') selected = new Set(DEFECTS.map((d) => d.id))
 
+  const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const groups = [...new Set(DEFECTS.map((d) => d.group))]
   $('groups').innerHTML = groups.map((g) => {
     const items = DEFECTS.filter((d) => d.group === g)
@@ -111,7 +112,7 @@
         <div><button class="small" data-all="${g}" type="button">All</button> <button class="small" data-none="${g}" type="button">None</button></div></div>
       ${items.map((d) => `<label class="toggle">
         <input type="checkbox" value="${d.id}"><span class="switch"></span>
-        <span><strong>${d.label}</strong><small>${d.detail}</small><br><code>${d.id}</code></span>
+        <span><strong>${esc(d.label)}</strong><small>${esc(d.detail)}</small><br><code>${d.id}</code></span>
       </label>`).join('')}
     </section>`
   }).join('')
