@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Peas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  /* Built from Figma "Figma basics" › Homepage (node 4368:321106), 1440 × 2092 */
+  :root {
+    --green: #426B1F;
+    --ink: #000000;
+    --page: #FFFFFF;
+    --gutter: 96px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--page); color: var(--ink); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1440px; margin: 0 auto; padding-bottom: 30px; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; background: var(--green); color: #FFFFFF;
+         border: 0; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; }
+  .btn:hover { background: #355918; }
+
+  /* Header */
+  .header { height: 112px; padding: 0 var(--gutter); display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: 'Newsreader', serif; font-weight: 500; font-size: 32px; line-height: 32px; letter-spacing: -0.32px; color: var(--green); }
+  .nav { display: flex; align-items: center; gap: 48px; }
+  .nav a { font-size: 16px; line-height: 20.8px; }
+  .nav a:hover { text-decoration: underline; }
+  .nav .btn { width: 126px; height: 48px; font-size: 16px; line-height: 20.8px; }
+
+  /* Hero */
+  .hero { padding-top: 167px; text-align: center; }
+  .hero h1 { width: 1020px; max-width: calc(100% - 2 * var(--gutter)); margin: 0 auto;
+             font-family: 'Newsreader', serif; font-weight: 400; font-size: 64px; line-height: 76.8px; letter-spacing: -1.28px; }
+  /* The Figma headline box sits 7px right of centre; kept so the page matches the design */
+  .hero h1 { translate: 7px 0; }
+  .hero h1 em { font-style: italic; }
+  .hero .btn { margin-top: 48px; height: 64px; padding: 0 32px; font-size: 20px; line-height: 26px; }
+
+  /* Photos */
+  .photos { margin-top: 156px; padding-left: var(--gutter); display: grid; grid-template-columns: 504px 780px; column-gap: 60px; align-items: start; }
+  .photos img { display: block; width: 100%; height: auto; }
+  .photos figure { margin: 0; }
+  .photos .second { margin-top: 90px; }
+  .photos figcaption { margin-top: 16px; width: 736px; max-width: 100%; font-size: 14px; line-height: 22.4px; letter-spacing: -0.14px; font-weight: 300; }
+  .photos figcaption strong { font-weight: 500; }
+
+  /* What we believe */
+  .believe { margin-top: 156px; padding-left: var(--gutter); display: grid; grid-template-columns: 213px 822px; }
+  .believe h2 { margin: 5px 0 0; font-size: 14px; line-height: 22.4px; letter-spacing: 0.56px; font-weight: 600; text-transform: uppercase; }
+  .believe p { margin: 0; font-size: 20px; line-height: 32px; letter-spacing: -0.08px; }  /* Chrome draws Inter ~1% wider than Figma; this keeps the line breaks the same */
+  .believe p + p { margin-top: 32px; }
+
+  /* Narrow screens: stack everything */
+  @media (max-width: 1100px) {
+    :root { --gutter: 24px; }
+    .header { height: auto; padding-top: 24px; padding-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+    .nav { gap: 24px; flex-wrap: wrap; }
+    .hero { padding-top: 80px; }
+    .hero h1 { translate: none; font-size: 40px; line-height: 48px; letter-spacing: -0.8px; }
+    .photos, .believe { margin-top: 80px; padding-right: var(--gutter); grid-template-columns: 1fr; row-gap: 40px; }
+    .photos .second { margin-top: 0; }
+    .believe { row-gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="header">
+    <a class="logo" href="#">World Peas</a>
+    <nav class="nav">
+      <a href="#">Shop</a>
+      <a href="#">Newstand</a>
+      <a href="#">Who we are</a>
+      <a href="#">My profile</a>
+      <a class="btn" href="#">Basket (3)</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>We’re <em>farmers</em>, <em>purveyors</em>, and <em>eaters</em> of organically grown food.</h1>
+      <a class="btn" href="#">Browse our shop</a>
+    </section>
+
+    <section class="photos">
+      <figure>
+        <img src="images/greens.jpg" width="504" height="693" alt="Chard, spinach and kale laid out on a grey stone surface">
+      </figure>
+      <figure class="second">
+        <img src="images/produce.jpg" width="780" height="480" alt="A lemon and a tomato balanced on a loaf of bread, with a beetroot leaning against it">
+        <figcaption><strong>Central California</strong> — The person who grew these was located in Central California and, er, hopefully very well-compensated.</figcaption>
+      </figure>
+    </section>
+
+    <section class="believe">
+      <h2>What we believe</h2>
+      <div>
+        <p>We believe in produce. Tasty produce. Produce like:</p>
+        <p>Apples. Oranges. Limes. Lemons. Guavas. Carrots. Cucumbers. Jicamas. Cauliflowers. Brussels sprouts. Shallots. Japanese eggplants. Asparagus. Artichokes—Jerusalem artichokes, too. Radishes. Broccoli. Baby broccoli. Broccolini. Bok choy. Scallions. Ginger. Cherries. Raspberries. Cilantro. Parsley. Dill. </p>
+        <p>What are we forgetting?</p>
+        <p>Oh! Onions. Yams. Avocados. Lettuce. Arugula (to some, “rocket”). Persian cucumbers, in addition to aforementioned “normal” cucumbers. Artichokes. Zucchinis. Pumpkins. Squash (what some cultures call pumpkins). Sweet potatoes and potato-potatoes. Jackfruit. Monk fruit. Fruit of the Loom. Fruits of our labor (this website). Sorrel. Pineapple. Mango. Gooseberries. Blackberries. Tomatoes. Heirloom tomatoes. Beets. Chives. Corn. Endive. Escarole, which, we swear, we’re vendors of organic produce, but if you asked us to describe what escaroles are...</p>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>
