@@ -72,35 +72,35 @@
 <body>
 <div class="page">
   <header class="header">
-    <a class="logo" href="#">World Peas</a>
+    <a class="logo" id="logo" href="#">World Peas</a>
     <nav class="nav">
-      <a href="#">Shop</a>
-      <a href="#">Newstand</a>
-      <a href="#">Who we are</a>
-      <a href="#">My profile</a>
-      <a class="btn" href="#">Basket (3)</a>
+      <a id="nav-shop" href="#">Shop</a>
+      <a id="nav-newstand" href="#">Newstand</a>
+      <a id="nav-who" href="#">Who we are</a>
+      <a id="nav-profile" href="#">My profile</a>
+      <a class="btn" id="basket" href="#">Basket (3)</a>
     </nav>
   </header>
 
   <main>
     <section class="hero">
-      <h1>We’re <em>farmers</em>, <em>purveyors</em>, and <em>eaters</em> of organically grown food.</h1>
-      <a class="btn" href="#">Browse our shop</a>
+      <h1 id="headline">We’re <em>farmers</em>, <em>purveyors</em>, and <em>eaters</em> of organically grown food.</h1>
+      <a class="btn" id="cta" href="#">Browse our shop</a>
     </section>
 
     <section class="photos">
       <figure>
-        <img src="images/greens.jpg" width="504" height="693" alt="Chard, spinach and kale laid out on a grey stone surface">
+        <img id="img-greens" src="images/greens.jpg" width="504" height="693" alt="Chard, spinach and kale laid out on a grey stone surface">
       </figure>
       <figure class="second">
-        <img src="images/produce.jpg" width="780" height="480" alt="A lemon and a tomato balanced on a loaf of bread, with a beetroot leaning against it">
-        <figcaption><strong>Central California</strong> — The person who grew these was located in Central California and, er, hopefully very well-compensated.</figcaption>
+        <img id="img-produce" src="images/produce.jpg" width="780" height="480" alt="A lemon and a tomato balanced on a loaf of bread, with a beetroot leaning against it">
+        <figcaption id="caption"><strong>Central California</strong> — The person who grew these was located in Central California and, er, hopefully very well-compensated.</figcaption>
       </figure>
     </section>
 
     <section class="believe">
-      <h2>What we believe</h2>
-      <div>
+      <h2 id="believe-label">What we believe</h2>
+      <div id="believe-text">
         <p>We believe in produce. Tasty produce. Produce like:</p>
         <p>Apples. Oranges. Limes. Lemons. Guavas. Carrots. Cucumbers. Jicamas. Cauliflowers. Brussels sprouts. Shallots. Japanese eggplants. Asparagus. Artichokes—Jerusalem artichokes, too. Radishes. Broccoli. Baby broccoli. Broccolini. Bok choy. Scallions. Ginger. Cherries. Raspberries. Cilantro. Parsley. Dill. </p>
         <p>What are we forgetting?</p>
@@ -109,5 +109,7 @@
     </section>
   </main>
 </div>
+<!-- Optional defects for visual testing: add ?bugs=<id>,<id> to the address. Pick them at admin/ -->
+<script src="defects.js"></script>
 </body>
 </html>

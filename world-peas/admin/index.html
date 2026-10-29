@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Peas defects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #426B1F; --green-soft: #EEF4E8; --ink: #111827; --muted: #4B5563; --line: #E5E7EB; --page: #F9FAF7; --card: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 Inter, system-ui, sans-serif; }
+  main { max-width: 1200px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font: 500 32px/1.2 Newsreader, Georgia, serif; color: var(--green); margin: 0 0 4px; }
+  .lead { color: var(--muted); margin: 0 0 24px; max-width: 760px; }
+
+  /* Link bar stays in view while you scroll the toggles */
+  .bar { position: sticky; top: 0; z-index: 2; background: var(--page); padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+  .bar-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .link { flex: 1 1 420px; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card);
+          font: 13px/1.4 ui-monospace, Menlo, monospace; overflow-x: auto; white-space: nowrap; }
+  .count { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  button { font: inherit; font-weight: 600; border-radius: 8px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  button.primary { background: var(--green); border-color: var(--green); color: #FFFFFF; }
+  button.small { padding: 4px 10px; font-size: 13px; font-weight: 500; }
+  button:hover { border-color: var(--green); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+  .group { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .group-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .group h2 { font-size: 16px; margin: 0; }
+  .group-head span { color: var(--muted); font-size: 13px; font-weight: 400; margin-left: 6px; }
+
+  .toggle { display: flex; gap: 12px; align-items: flex-start; padding: 8px; margin: 0 -8px; border-radius: 8px; cursor: pointer; }
+  .toggle:hover { background: var(--page); }
+  .toggle input { position: absolute; opacity: 0; pointer-events: none; }
+  .switch { flex: none; width: 36px; height: 20px; border-radius: 10px; background: #D1D5DB; position: relative; margin-top: 2px; transition: background .15s; }
+  .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; transition: left .15s; }
+  .toggle input:checked + .switch { background: var(--green); }
+  .toggle input:checked + .switch::after { left: 18px; }
+  .toggle input:focus-visible + .switch { outline: 2px solid var(--green); outline-offset: 2px; }
+  .toggle strong { display: block; font-weight: 500; }
+  .toggle small { color: var(--muted); font-size: 13px; }
+  .toggle code { font-size: 12px; color: var(--muted); }
+
+  .preview { margin-top: 32px; }
+  .preview h2 { font-size: 18px; margin: 0 0 8px; }
+  .frame { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #FFFFFF; position: relative; }
+  .frame iframe { border: 0; width: 1440px; transform-origin: 0 0; display: block; }
+  .help { margin-top: 32px; padding: 16px 20px; background: var(--green-soft); border-radius: 12px; }
+  .help h2 { font-size: 16px; margin: 0 0 8px; }
+  .help ol { margin: 0; padding-left: 20px; }
+  .help li { margin: 4px 0; }
+
+  @media (prefers-reduced-motion: reduce) { .switch, .switch::after { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>World Peas defects</h1>
+  <p class="lead">Turn on the defects you want, then use the link in Applitools. Without <code>?bugs=</code> the page is the clean design, so use that as the baseline.</p>
+
+  <div class="bar">
+    <div class="bar-row">
+      <div class="link" id="link"></div>
+      <button class="primary" id="copy" type="button">Copy link</button>
+      <button id="open" type="button">Open page</button>
+      <button id="clear" type="button">Turn all off</button>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <div class="grid" id="groups"></div>
+
+  <section class="preview">
+    <h2>Preview</h2>
+    <div class="frame" id="frame"><iframe id="iframe" title="Page preview" height="2200"></iframe></div>
+  </section>
+
+  <section class="help">
+    <h2>How to use it in Applitools</h2>
+    <ol>
+      <li>Baseline: run against the clean page, <code id="clean"></code>.</li>
+      <li>Checkpoint: turn on defects here, copy the link, and run against it with the same viewport (1440 wide).</li>
+      <li>Dynamic content defects change on every load, so they show up even when you run the same link twice.</li>
+    </ol>
+  </section>
+</main>
+
+<script src="../defects.js" data-list-only></script>
+<script>
+  const DEFECTS = window.WP_DEFECTS
+  const pageUrl = new URL('../', location.href).href
+  const KEY = 'wpDefects'
+  const $ = (id) => document.getElementById(id)
+
+  // Start from ?bugs= on this page if given (to edit an existing link), otherwise the last selection in this browser
+  let selected = new Set()
+  const fromUrl = new URLSearchParams(location.search).get('bugs')
+  try { selected = new Set((fromUrl ?? localStorage.getItem(KEY) ?? '').split(',').filter(Boolean)) } catch {}
+  if (fromUrl === 'all') selected = new Set(DEFECTS.map((d) => d.id))
+
+  const groups = [...new Set(DEFECTS.map((d) => d.group))]
+  $('groups').innerHTML = groups.map((g) => {
+    const items = DEFECTS.filter((d) => d.group === g)
+    return `<section class="group" data-group="${g}">
+      <div class="group-head"><h2>${g}<span>${items.length}</span></h2>
+        <div><button class="small" data-all="${g}" type="button">All</button> <button class="small" data-none="${g}" type="button">None</button></div></div>
+      ${items.map((d) => `<label class="toggle">
+        <input type="checkbox" value="${d.id}"><span class="switch"></span>
+        <span><strong>${d.label}</strong><small>${d.detail}</small><br><code>${d.id}</code></span>
+      </label>`).join('')}
+    </section>`
+  }).join('')
+
+  const boxes = [...document.querySelectorAll('.toggle input')]
+  const linkFor = () => {
+    const ids = DEFECTS.map((d) => d.id).filter((id) => selected.has(id))
+    return ids.length ? `${pageUrl}?bugs=${ids.join(',')}` : pageUrl
+  }
+
+  let lastPreview = ''
+  function refresh() {
+    boxes.forEach((b) => { b.checked = selected.has(b.value) })
+    const link = linkFor()
+    $('link').textContent = link
+    const n = DEFECTS.filter((d) => selected.has(d.id)).length
+    $('count').textContent = n ? `${n} of ${DEFECTS.length} defects on` : `No defects on: this is the clean page (${DEFECTS.length} available)`
+    try { localStorage.setItem(KEY, [...selected].join(',')) } catch {}
+    if (link !== lastPreview) { $('iframe').src = link; lastPreview = link }
+  }
+
+  boxes.forEach((b) => b.addEventListener('change', () => { b.checked ? selected.add(b.value) : selected.delete(b.value); refresh() }))
+  document.addEventListener('click', (e) => {
+    const all = e.target.dataset.all, none = e.target.dataset.none
+    if (all) DEFECTS.filter((d) => d.group === all).forEach((d) => selected.add(d.id))
+    if (none) DEFECTS.filter((d) => d.group === none).forEach((d) => selected.delete(d.id))
+    if (all || none) refresh()
+  })
+  $('clear').addEventListener('click', () => { selected.clear(); refresh() })
+  $('open').addEventListener('click', () => window.open(linkFor(), '_blank'))
+  $('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(linkFor()); $('copy').textContent = 'Copied' }
+    catch { getSelection().selectAllChildren($('link')); $('copy').textContent = 'Press Cmd+C' }
+    setTimeout(() => { $('copy').textContent = 'Copy link' }, 1500)
+  })
+  $('clean').textContent = pageUrl
+
+  // Scale the 1440px-wide preview to fit the column
+  const fit = () => {
+    const s = $('frame').clientWidth / 1440
+    $('iframe').style.transform = `scale(${s})`
+    $('frame').style.height = 2200 * s + 'px'
+  }
+  new ResizeObserver(fit).observe($('frame'))
+  refresh()
+</script>
+</body>
+</html>
