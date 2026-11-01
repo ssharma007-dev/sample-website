@@ -8,17 +8,32 @@
   const today = () => new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   const time = () => new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
   const setText = (sel, from, to) => { const el = $(sel); el.innerHTML = el.innerHTML.replace(from, to) }
+  // Text-only change: the new text keeps the old text's exact width, so nothing else on the page moves.
+  const swapText = (sel, from, to) => {
+    const el = $(sel)
+    el.innerHTML = el.innerHTML.replace(from, `<span data-swap>${from}</span>`)
+    const span = el.querySelector('[data-swap]')
+    const width = span.getBoundingClientRect().width
+    span.style.cssText = `display:inline-block;width:${width}px;white-space:nowrap;text-align:center`
+    span.textContent = to
+  }
+  const lockWidth = (sel, text) => {
+    const el = $(sel)
+    el.style.width = `${el.getBoundingClientRect().width}px`
+    el.style.boxSizing = 'border-box'; el.style.textAlign = 'center'; el.style.whiteSpace = 'nowrap'
+    el.textContent = text
+  }
 
   const DEFECTS = [
     // Text content
-    { id: 'typo-headline', group: 'Text', label: 'Typo in headline', detail: '"farmers" becomes "famers"',
-      run: () => setText('#headline', 'farmers', 'famers') },
-    { id: 'typo-nav', group: 'Text', label: 'Typo in nav', detail: '"Newstand" becomes "Newsstand"',
-      run: () => setText('#nav-newstand', 'Newstand', 'Newsstand') },
-    { id: 'cta-text', group: 'Text', label: 'Button text changed', detail: '"Browse our shop" becomes "Shop now"',
-      run: () => { $('#cta').textContent = 'Shop now' } },
-    { id: 'caption-text', group: 'Text', label: 'Caption place changed', detail: '"Central California" becomes "Northern Oregon"',
-      run: () => setText('#caption', 'Central California</strong>', 'Northern Oregon</strong>') },
+    { id: 'typo-headline', group: 'Text', label: 'Typo in headline', detail: '"farmers" becomes "famers" (text only; layout unchanged)',
+      run: () => swapText('#headline', 'farmers', 'famers') },
+    { id: 'typo-nav', group: 'Text', label: 'Typo in nav', detail: '"Newstand" becomes "Newsstand" (text only; layout unchanged)',
+      run: () => swapText('#nav-newstand', 'Newstand', 'Newsstand') },
+    { id: 'cta-text', group: 'Text', label: 'Button text changed', detail: '"Browse our shop" becomes "Shop now" (button keeps its size)',
+      run: () => lockWidth('#cta', 'Shop now') },
+    { id: 'caption-text', group: 'Text', label: 'Caption place changed', detail: '"Central California" becomes "Northern Oregon" (text only; layout unchanged)',
+      run: () => swapText('#caption strong', 'Central California', 'Northern Oregon') },
     { id: 'missing-paragraph', group: 'Text', label: 'Paragraph missing', detail: '"What are we forgetting?" is removed',
       run: () => $('#believe-text p:nth-child(3)').remove() },
     { id: 'extra-word', group: 'Text', label: 'Extra word in list', detail: 'Adds "Kale." after "Dill."',
@@ -135,6 +150,11 @@
   const active = DEFECTS.filter((d) => wanted.includes(d.id))
   const css = active.map((d) => d.css).filter(Boolean).join('\n')
   if (css) document.head.insertAdjacentHTML('beforeend', `<style id="defects">${css}</style>`)
-  for (const d of active) if (d.run) d.run()
-  document.documentElement.dataset.defects = active.map((d) => d.id).join(' ')
+  // Wait for web fonts so text swaps measure the real font, not a fallback.
+  const runAll = () => {
+    for (const d of active) if (d.run) d.run()
+    document.documentElement.dataset.defects = active.map((d) => d.id).join(' ')
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(runAll)
+  else runAll()
 })()
